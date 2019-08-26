@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+<?php
+use Magento\Framework\App\Bootstrap;
+use Magently\UtilsProjectSetupHelper\CommandContext;
+use Magently\UtilsProjectSetupHelper\Configure;
+use Magently\UtilsProjectSetupHelper\OutputHelper;
+
+/**
+ * Configure Magento bootstrap
+ */
+include_once getcwd() . '/app/bootstrap.php';
+$params = $_SERVER;
+$bootstrap = Bootstrap::create(BP, $params);
+
+/**
+ * Configure commands
+ */
+$commandConfig = include_once 'src/config.php';
+$commandContext = new CommandContext(
+    $bootstrap->getObjectManager(),
+    new OutputHelper()
+);
+
+$configure = new Configure(
+    $commandContext,
+    $commandConfig
+);
+$configure->configure();
+
+
+/**
+ * Resolve parameters
+ */
+if (!isset($argv[1])) {
+    // no arguments, display help
+    $configure->getHelp();
+    exit(1);
+}
+
+if (isset($argv[1])) {
+    $command = $argv[1];
+    if ($command == 'run') {
+        // run all commands
+        $configure->run();
+        exit(1);
+    }
+
+    // run specific command
+    $value = isset($argv[2]) ? $argv[2] : '';
+    $configure->runCommand($command, $value);
+    exit(1);
+}
