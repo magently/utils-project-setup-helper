@@ -45,8 +45,13 @@ if (isset($argv[1])) {
         exit(1);
     }
 
+    if ($argv[2] == '--help') {
+        $configure->runCommandHelp($command);
+        exit(1);
+    }
+
     // run specific command
-    $value = isset($argv[2]) ? $argv[2] : '';
+    $value = isset($argv[2]) ? $argv[2] : null;
     $configure->runCommand($command, $value);
     exit(1);
 }

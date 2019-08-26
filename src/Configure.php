@@ -41,12 +41,12 @@ class Configure
     public function getHelp()
     {
         $output = $this->commandContext->outputHelper();
+        $output->writeln('Project setup helper. Available commands:');
+        $output->breakLine();
         foreach ($this->commands as $command) {
-            $output->writeln('Project setup helper. Available commands:');
-            $output->breakLine();
 
             $output->writeln($command->getName());
-            $output->writeln('Usage: ');
+            $output->writeln('Description: ');
             $command->help();
 
             $output->breakLine();
@@ -66,12 +66,22 @@ class Configure
         }
     }
 
-    public function runCommand($commandName, $value = '')
+    public function runCommand($commandName, $value = null)
     {
         $this->commandContext->outputHelper()->writeln('Running: ' . $commandName);
         $this->commandContext->outputHelper()->breakLine();
 
         $this->commands[$commandName]->run($value);
+
+        $this->commandContext->outputHelper()->breakLine();
+    }
+
+    public function runCommandHelp($commandName)
+    {
+        $this->commandContext->outputHelper()->writeln('Help for: ' . $commandName);
+        $this->commandContext->outputHelper()->breakLine();
+
+        $this->commands[$commandName]->help();
 
         $this->commandContext->outputHelper()->breakLine();
     }

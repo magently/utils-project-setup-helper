@@ -26,9 +26,6 @@
   "autoload": {
     "psr-4": {
       "Magently\\UtilsProjectSetupHelper\\": "src/"
-    },
-    "classmap": [
-      "src/"
-    ]
+    }
   }
 }
