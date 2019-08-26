@@ -26,7 +26,7 @@ class CommandContext
     }
 
     /**
-     * @return OutputHelper
+     * @return \Symfony\Component\Console\Output\ConsoleOutput
      */
     public function outputHelper()
     {

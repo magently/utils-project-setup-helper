@@ -38,51 +38,97 @@ class Configure
         }
     }
 
+    private function getWelcomeMessage()
+    {
+        $output = $this->commandContext->outputHelper();
+        $output->writeln('<info>===============================</info>');
+        $output->writeln('<info>Magently project setup helper</info>');
+        $output->writeln('<info>===============================</info>');
+        $output->writeln('');
+    }
+
+    private function getUsageMessage()
+    {
+        $output = $this->commandContext->outputHelper();
+        $output->writeln('Usage: ');
+        $output->writeln(
+            '<info>php vendor/bin/configure</info> - <comment>display this messages</comment>'
+        );
+        $output->writeln(
+            '<info>php vendor/bin/configure run</info> - '
+            . '<comment>run all commands with default values</comment>'
+        );
+        $output->writeln(
+            '<info>php vendor/bin/configure {{command_name}}</info> - '
+            .'<comment>run specific command with default value</comment>'
+        );
+        $output->writeln(
+            '<info>php vendor/bin/configure {{command_name}} --help</info> - '
+            .'<comment>display help message for specific command</comment>'
+        );
+        $output->writeln(
+            '<info>php vendor/bin/configure {{command_name}} {{value}}</info> - '
+            .'<comment>run specific command with your value</comment>'
+        );
+        $output->writeln('');
+    }
+
     public function getHelp()
     {
         $output = $this->commandContext->outputHelper();
-        $output->writeln('Project setup helper. Available commands:');
-        $output->breakLine();
-        foreach ($this->commands as $command) {
+        $this->getWelcomeMessage();
+        $this->getUsageMessage();
 
-            $output->writeln($command->getName());
+        $output->writeln('<comment>Available commands: </comment>');
+        foreach ($this->commands as $command) {
+            $output->writeln('<comment>--></comment> ' . '<info>' . $command->getName() . '</info>');
             $output->writeln('Description: ');
             $command->help();
 
-            $output->breakLine();
+            $output->writeln('');
         }
     }
 
     public function run()
     {
+        $this->commandContext->outputHelper()->writeln('<comment>Running all commands</comment>');
+        $this->commandContext->outputHelper()->writeln('');
         foreach ($this->commands as $commandName => $command) {
-            $this->commandContext->outputHelper()->breakLine();
-            $this->commandContext->outputHelper()->writeln('Running: ' . $commandName);
-            $this->commandContext->outputHelper()->breakLine();
-
-            $command->run();
-
-            $this->commandContext->outputHelper()->breakLine();
+            $this->runCommand($commandName);
         }
     }
 
     public function runCommand($commandName, $value = null)
     {
-        $this->commandContext->outputHelper()->writeln('Running: ' . $commandName);
-        $this->commandContext->outputHelper()->breakLine();
+        if (!isset($this->commands[$commandName])) {
+            throw new \Exception(sprintf('Command %s does not exist', $commandName));
+        }
+
+        $this->commandContext->outputHelper()->writeln(
+            '<comment>Running: </comment>' . '<info>' .$commandName . '</info>'
+        );
+        $this->commandContext->outputHelper()->writeln('');
 
         $this->commands[$commandName]->run($value);
 
-        $this->commandContext->outputHelper()->breakLine();
+        $this->commandContext->outputHelper()->writeln('');
     }
 
     public function runCommandHelp($commandName)
     {
-        $this->commandContext->outputHelper()->writeln('Help for: ' . $commandName);
-        $this->commandContext->outputHelper()->breakLine();
+        if (!isset($this->commands[$commandName])) {
+            throw new \Exception(sprintf('Command %s does not exist', $commandName));
+        }
 
-        $this->commands[$commandName]->help();
+        $this->commandContext->outputHelper()->writeln(
+            '<comment>Help for: </comment>' . '<info>' . $commandName . '</info>'
+        );
+        $this->commandContext->outputHelper()->writeln('');
 
-        $this->commandContext->outputHelper()->breakLine();
+        $this->commandContext->outputHelper()->writeln(
+            '<comment>' . $this->commands[$commandName]->help() . '</comment>'
+        );
+
+        $this->commandContext->outputHelper()->writeln('');
     }
 }

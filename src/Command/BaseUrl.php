@@ -60,9 +60,7 @@ class BaseUrl implements CommandInterface
 
     public function help()
     {
-        $this->context->outputHelper()->writeln(
-            'Change base URL. Pass base_url value or leave empty to use {{base_url}}'
-        );
+        return 'Change base URL. Pass base_url value or leave empty to use {{base_url}}';
     }
 
     public function getName()
