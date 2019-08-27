@@ -1,10 +1,24 @@
 <?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
 
 namespace Magently\UtilsProjectSetupHelper;
 
+/**
+ * Class Configure
+ * The class responsible for managing commands
+ */
 class Configure
 {
+    /**
+     * @var CommandContext
+     */
     private $commandContext;
+
+    /**
+     * @var array
+     */
     private $config;
 
     /**
@@ -12,6 +26,11 @@ class Configure
      */
     private $commands = [];
 
+    /**
+     * Configure constructor.
+     * @param CommandContext $commandContext
+     * @param array $config
+     */
     public function __construct(
         CommandContext $commandContext,
         array $config
@@ -20,6 +39,11 @@ class Configure
         $this->config = $config;
     }
 
+    /**
+     * Create objects from Command classes
+     * @throws \Exception If command doesn't implement CommandInterface.
+     * @return void
+     */
     public function configure()
     {
         foreach ($this->config as $commandName => $commandClass) {
@@ -38,6 +62,10 @@ class Configure
         }
     }
 
+    /**
+     * Print Welcome message
+     * @return void
+     */
     private function getWelcomeMessage()
     {
         $output = $this->commandContext->outputHelper();
@@ -47,6 +75,10 @@ class Configure
         $output->writeln('');
     }
 
+    /**
+     * Print usage message
+     * @return void
+     */
     private function getUsageMessage()
     {
         $output = $this->commandContext->outputHelper();
@@ -73,6 +105,10 @@ class Configure
         $output->writeln('');
     }
 
+    /**
+     * Print help message for each command
+     * @return void
+     */
     public function getHelp()
     {
         $output = $this->commandContext->outputHelper();
@@ -83,12 +119,18 @@ class Configure
         foreach ($this->commands as $command) {
             $output->writeln('<comment>--></comment> ' . '<info>' . $command->getName() . '</info>');
             $output->writeln('Description: ');
-            $command->help();
+            $output->writeln(
+                $command->help()
+            );
 
             $output->writeln('');
         }
     }
 
+    /**
+     * Run all commands
+     * @return void
+     */
     public function run()
     {
         $this->commandContext->outputHelper()->writeln('<comment>Running all commands</comment>');
@@ -98,6 +140,13 @@ class Configure
         }
     }
 
+    /**
+     * Run specific command
+     * @param string $commandName
+     * @param mixed $value
+     * @throws \Exception If command doesn't exist.
+     * @return void
+     */
     public function runCommand($commandName, $value = null)
     {
         if (!isset($this->commands[$commandName])) {
@@ -114,6 +163,12 @@ class Configure
         $this->commandContext->outputHelper()->writeln('');
     }
 
+    /**
+     * Print specific command help
+     * @param string $commandName
+     * @throws \Exception If command doesn't exist.
+     * @return void
+     */
     public function runCommandHelp($commandName)
     {
         if (!isset($this->commands[$commandName])) {

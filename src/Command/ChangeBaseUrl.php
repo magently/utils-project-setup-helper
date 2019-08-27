@@ -1,29 +1,43 @@
 <?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
 
 namespace Magently\UtilsProjectSetupHelper\Command;
 
 use Magently\UtilsProjectSetupHelper\CommandContext;
 
-class BaseUrl implements CommandInterface
+/**
+ * Class ChangeBaseUrl
+ * The class responsible for setting base url
+ */
+class ChangeBaseUrl implements CommandInterface
 {
     /**
      * @var CommandContext
      */
     private $context;
 
+    /**
+     * {@inheritDoc}
+     * @param CommandContext $context
+     * @return void
+     */
     public function setContext(CommandContext $context)
     {
         $this->context = $context;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param null|string $value
+     * @return void
+     */
     public function run($value = null)
     {
         $om = $this->context->objectManager();
-        /**
-         * @var $configWriter \Magento\Framework\App\Config\Storage\WriterInterface
-         */
+        /** @var $configWriter \Magento\Framework\App\Config\Storage\WriterInterface */
         $configWriter = $om->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
-
         /** @var $resource \Magento\Framework\App\ResourceConnection */
         $resource = $om->get(\Magento\Framework\App\ResourceConnection::class);
         $connection = $resource->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
@@ -58,13 +72,21 @@ class BaseUrl implements CommandInterface
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string
+     */
     public function help()
     {
         return 'Change base URL. Pass base_url value or leave empty to use {{base_url}}';
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string
+     */
     public function getName()
     {
-        return 'base_url_change';
+        return 'change_base_url';
     }
 }

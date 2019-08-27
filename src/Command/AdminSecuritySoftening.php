@@ -1,9 +1,16 @@
 <?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
 
 namespace Magently\UtilsProjectSetupHelper\Command;
 
 use Magently\UtilsProjectSetupHelper\CommandContext;
 
+/**
+ * Class AdminSecuritySoftening
+ * The class responsible for setting less stringent admin security settings.
+ */
 class AdminSecuritySoftening implements CommandInterface
 {
     /**
@@ -11,23 +18,30 @@ class AdminSecuritySoftening implements CommandInterface
      */
     private $context;
 
+    /**
+     * {@inheritDoc}
+     * @param CommandContext $context
+     * @return void
+     */
     public function setContext(CommandContext $context)
     {
         $this->context = $context;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param null|string $value
+     * @return void
+     */
     public function run($value = null)
     {
         $om = $this->context->objectManager();
-        /**
-         * @var $configWriter \Magento\Framework\App\Config\Storage\WriterInterface
-         */
+        /** @var $configWriter \Magento\Framework\App\Config\Storage\WriterInterface */
         $configWriter = $om->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
 
         if ($value === '0') {
             $msg = 'Nothing has been changed';
-        }
-        elseif ($value === null || $value === '1') {
+        } elseif ($value === null || $value === '1') {
             $configWriter->save('admin/security/use_case_sensitive_login', '0');
             $configWriter->save('admin/security/session_lifetime', '31536000');
             $configWriter->save('admin/security/password_lifetime', '0');
@@ -37,10 +51,13 @@ class AdminSecuritySoftening implements CommandInterface
             $msg = 'Admin security has been made less stringent.';
         }
 
-
         $this->context->outputHelper()->writeln($msg);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return void
+     */
     public function help()
     {
         $this->context->outputHelper()->writeln(
@@ -63,6 +80,10 @@ class AdminSecuritySoftening implements CommandInterface
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string
+     */
     public function getName()
     {
         return 'admin_security_softening';

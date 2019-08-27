@@ -1,9 +1,16 @@
 <?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
 
 namespace Magently\UtilsProjectSetupHelper\Command;
 
 use Magently\UtilsProjectSetupHelper\CommandContext;
 
+/**
+ * Class DisableMailCommunication
+ * The class responsible for disabling mail communication in Magento backend
+ */
 class DisableMailCommunication implements CommandInterface
 {
     /**
@@ -11,11 +18,21 @@ class DisableMailCommunication implements CommandInterface
      */
     private $context;
 
+    /**
+     * {@inheritDoc}
+     * @param CommandContext $context
+     * @return void
+     */
     public function setContext(CommandContext $context)
     {
         $this->context = $context;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param null|string $value
+     * @return void
+     */
     public function run($value = null)
     {
         $om = $this->context->objectManager();
@@ -26,12 +43,10 @@ class DisableMailCommunication implements CommandInterface
 
         if ($value === '0') {
             $msg = 'Mail communication has not been disabled';
-        }
-        elseif ($value === null || $value === '1') {
+        } elseif ($value === null || $value === '1') {
             // use default value
             $value = '1';
             $msg = 'Mail communication has been disabled';
-
         }
 
         $configWriter->save('system/smtp/disable', $value);
@@ -39,13 +54,19 @@ class DisableMailCommunication implements CommandInterface
         $this->context->outputHelper()->writeln($msg);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string
+     */
     public function help()
     {
-        $this->context->outputHelper()->writeln(
-            'Disable mail communications. Default value is 1'
-        );
+        return 'Disable mail communications. Default value is 1';
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string
+     */
     public function getName()
     {
         return 'disable_mail_communication';

@@ -1,5 +1,9 @@
 #!/usr/bin/env php
 <?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
+
 use Magento\Framework\App\Bootstrap;
 use Magently\UtilsProjectSetupHelper\CommandContext;
 use Magently\UtilsProjectSetupHelper\Configure;
@@ -36,7 +40,7 @@ try {
     if (!isset($argv[1])) {
         // no arguments, display help
         $configure->getHelp();
-        exit(1);
+        exit(0);
     }
 
     if (isset($argv[1])) {
@@ -44,23 +48,23 @@ try {
         if ($command == 'run') {
             // run all commands
             $configure->run();
-            exit(1);
+            exit(0);
         }
 
         if (isset($argv[2]) && $argv[2] == '--help') {
             $configure->runCommandHelp($command);
-            exit(1);
+            exit(0);
         }
 
         // run specific command
         $value = isset($argv[2]) ? $argv[2] : null;
         $configure->runCommand($command, $value);
-        exit(1);
+        exit(0);
     }
 } catch (\Exception $exception) {
     print "\e[0;31;40mSomething went wrong!\e[0m\n";
     print $exception->getMessage() . PHP_EOL;
     print $exception->getTraceAsString() . PHP_EOL;
     print PHP_EOL;
-    exit(0);
+    exit(1);
 }

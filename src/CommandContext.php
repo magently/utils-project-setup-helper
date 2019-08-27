@@ -1,17 +1,37 @@
 <?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
 
 namespace Magently\UtilsProjectSetupHelper;
 
 use Magento\Framework\ObjectManagerInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
+/**
+ * Class CommandContext
+ * The class responsible for providing helper methods for commands
+ */
 class CommandContext
 {
+    /**
+     * @var ObjectManagerInterface
+     */
     private $om;
+
+    /**
+     * @var ConsoleOutput
+     */
     private $outputHelper;
 
+    /**
+     * CommandContext constructor.
+     * @param ObjectManagerInterface $om
+     * @param ConsoleOutput $outputHelper
+     */
     public function __construct(
-        $om,
-        $outputHelper
+        ObjectManagerInterface $om,
+        ConsoleOutput $outputHelper
     ) {
         $this->om = $om;
         $this->outputHelper = $outputHelper;
@@ -26,7 +46,7 @@ class CommandContext
     }
 
     /**
-     * @return \Symfony\Component\Console\Output\ConsoleOutput
+     * @return ConsoleOutput
      */
     public function outputHelper()
     {
