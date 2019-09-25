@@ -37,6 +37,7 @@ class CreateAdminAccount implements CommandInterface
     {
         $om = $this->context->objectManager();
 
+        /** @var \Magento\Framework\App\Shell $shell */
         $shell = $om->get(\Magento\Framework\App\Shell::class);
         $phpExecutableFinder = $om->get(\Symfony\Component\Process\PhpExecutableFinder::class);
 
@@ -50,8 +51,11 @@ class CreateAdminAccount implements CommandInterface
             $accountData = explode('/', $value);
             $username = $accountData[0];
             $password = $accountData[1];
+            if (strlen($password) < 7) {
+                throw new \Exception('Admin password must be at least 7 characters.');
+            }
         }
-        $email = $username . '+' . $password . '@example.com';
+        $email = $this->getAdminEmail($username);
 
         $shell->execute(
             $phpPath . ' %s ' . 'admin:user:create %s %s %s %s %s',
@@ -87,5 +91,26 @@ class CreateAdminAccount implements CommandInterface
     public function getName()
     {
         return 'create_admin_account';
+    }
+
+    /**
+     * Check if admin user already exists and return he's email
+     * Or generate new email address
+     * @param $username
+     * @return string
+     */
+    private function getAdminEmail($username)
+    {
+        $om = $this->context->objectManager();
+        /** @var $resource \Magento\Framework\App\ResourceConnection */
+        $resource = $om->get(\Magento\Framework\App\ResourceConnection::class);
+        $connection = $resource->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
+
+        $query = $connection->select()->from('admin_user', 'email')->where('username = ?', $username);
+        $email = $connection->fetchOne($query);
+        if (!$email) {
+            $email = $username . '@example.com';
+        }
+        return $email;
     }
 }
