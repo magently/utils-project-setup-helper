@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © Magently. All rights reserved.
+ */
+
+use Magento\Framework\App\Bootstrap;
+use Magently\UtilsProjectSetupHelper\CommandContext;
+use Magently\UtilsProjectSetupHelper\Configure;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+try {
+    /**
+     * Configure Magento bootstrap
+     */
+    include_once getcwd() . '/app/bootstrap.php';
+    $params = $_SERVER;
+    $bootstrap = Bootstrap::create(BP, $params);
+
+    /**
+     * Configure commands
+     */
+    $commandConfig = include_once 'src/config.php';
+    $commandContext = new CommandContext(
+        $bootstrap->getObjectManager(),
+        new ConsoleOutput()
+    );
+
+
+    $configure = new Configure(
+        $commandContext,
+        $commandConfig
+    );
+    $configure->configure();
+
+
+    /**
+     * Resolve parameters
+     */
+    if (!isset($argv[1])) {
+        // no arguments, display help
+        $configure->getHelp();
+        exit(0);
+    }
+
+    if (isset($argv[1])) {
+        $command = $argv[1];
+        if ($command == 'run') {
+            // run all commands
+            $configure->run();
+            exit(0);
+        }
+
+        if (isset($argv[2]) && $argv[2] == '--help') {
+            $configure->runCommandHelp($command);
+            exit(0);
+        }
+
+        // run specific command
+        $value = isset($argv[2]) ? $argv[2] : null;
+        $configure->runCommand($command, $value);
+        exit(0);
+    }
+} catch (\Exception $exception) {
+    print "\e[0;31;40mSomething went wrong!\e[0m\n";
+    print $exception->getMessage() . PHP_EOL;
+    print $exception->getTraceAsString() . PHP_EOL;
+    print PHP_EOL;
+    exit(1);
+}
